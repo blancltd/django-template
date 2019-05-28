@@ -26,10 +26,10 @@ clean: ## Remove unneeded files generated from the various build tasks.
 clean: coverage-clean
 
 reset: ## Reset your local environment. Useful after switching branches, etc.
-reset: venv-check venv-wipe install-local fab-get-data django-migrate django-user-passwords django-dev-createsuperuser{%- if cookiecutter.wagtail %} django-rebuild-index{%- endif %}
+reset: venv-check venv-wipe install-local fab-get-data django-migrate django-user-passwords django-dev-createsuperuser{%- if cookiecutter.wagtail == 'y' %} django-rebuild-index{%- endif %}
 
 clear: ## Like reset but without the wiping of the installs.
-clear: fab-get-data django-migrate django-user-passwords django-dev-createsuperuser{%- if cookiecutter.wagtail %} django-rebuild-index{%- endif %}
+clear: fab-get-data django-migrate django-user-passwords django-dev-createsuperuser{%- if cookiecutter.wagtail == 'y' %} django-rebuild-index{%- endif %}
 
 check: ## Check for any obvious errors in the project's setup.
 check: pipdeptree-check npm-check django-check
@@ -38,7 +38,7 @@ format: ## Run this project's code formatters.
 format: black-format isort-format prettier-format
 
 lint: ## Lint the project.
-lint: npm-install black-lint isort-lint flake8-lint jshint-lint prettier-lint
+lint: npm-install black-lint isort-lint flake8-lint eslint-lint prettier-lint
 
 test: ## Run unit and integration tests.
 test: django-test
@@ -154,7 +154,7 @@ django-user-passwords:
 django-migrate:
 	./manage.py migrate
 
-{%- if cookiecutter.wagtail %}
+{%- if cookiecutter.wagtail == 'y' %}
 
 django-rebuild-index:
 	./manage.py update_index
@@ -171,17 +171,16 @@ npm-run-production:
 	npm run production --silent
 
 
-# JSHint
-jshint-lint:
-	npm run jshint --silent -- --exclude="static/vendor/" static/
-
+# ESLint
+eslint-lint:
+	npm run eslint -- static/src/js
 
 # Prettier
 prettier-lint:
-	npm run prettier --silent -- --list-different "static/{js,scss}/**" gulpfile.js
+	npm run prettier --silent -- --list-different "static/src/{js,scss}/**" "*.js"
 
 prettier-format:
-	npm run prettier --silent -- --write "static/{js,scss}/**" gulpfile.js
+	npm run prettier --silent -- --write "static/src/{js,scss}/**" "*.js"
 
 
 # Black
