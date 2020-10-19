@@ -12,18 +12,15 @@ from django.urls import include, path
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from django.views.static import serve
-{%- if cookiecutter.wagtail == "y" %}
 
+from core.views import server_error
+{%- if cookiecutter.wagtail == "y" %}
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
-{%- endif %}
-
-from core.views import server_error
-
-{%- if cookiecutter.wagtail != "y" %}
+{%- else %}
 
 admin.site.site_title = "{{ cookiecutter.project_name }}"
 admin.site.site_header = "{{ cookiecutter.project_name }}"
